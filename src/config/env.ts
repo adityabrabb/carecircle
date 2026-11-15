@@ -59,6 +59,67 @@ export function storeBackend(): 'memory' | 'firestore' {
    return read('STORE_BACKEND') === 'firestore' ? 'firestore' : 'memory';
 }
 
+export interface FirebaseCredentials {
+   projectId: string;
+   clientEmail: string;
+   privateKey: string;
+}
+
+/**
+ * Purpose: service account for Firestore, or null when the host hands
+ * out credentials itself (Cloud Run does). FIREBASE_CREDENTIALS holds
+ * the downloaded service-account JSON, or the same JSON encoded as
+ * base64 for hosts that dislike multi-line secrets.
+ */
+export function firebaseCredentials(): FirebaseCredentials | null {
+   const raw = read('FIREBASE_CREDENTIALS');
+   if (!raw) {
+      return null;
+   }
+   const text = raw.startsWith('{')
+      ? raw
+      : Buffer.from(raw, 'base64').toString('utf8');
+   let parsed: Record<string, unknown>;
+   try {
+      parsed = JSON.parse(text) as Record<string, unknown>;
+   } catch {
+      throw new Error(
+         'FIREBASE_CREDENTIALS must be service-account JSON, or that JSON encoded as base64.',
+      );
+   }
+   const projectId = textField(parsed, 'project_id');
+   const clientEmail = textField(parsed, 'client_email');
+   const privateKey = textField(parsed, 'private_key', false);
+   if (!projectId || !clientEmail || !privateKey) {
+      throw new Error(
+         'FIREBASE_CREDENTIALS needs project_id, client_email and private_key.',
+      );
+   }
+   // ----- A JSON paste keeps the escapes; a shell paste may not.
+   return {
+      projectId,
+      clientEmail,
+      privateKey: privateKey.replace(/\\n/g, '\n'),
+   };
+}
+
+/**
+ * Purpose: read one field of the parsed service account as text. Names
+ * and addresses are trimmed; the private key is left exactly as given,
+ * because a lost trailing newline breaks the PEM block.
+ */
+function textField(
+   source: Record<string, unknown>,
+   name: string,
+   trim = true,
+): string {
+   const value = source[name];
+   if (typeof value !== 'string') {
+      return '';
+   }
+   return trim ? value.trim() : value;
+}
+
 export interface SmtpSettings {
    host: string;
    port: number;

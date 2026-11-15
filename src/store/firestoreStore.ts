@@ -4,10 +4,12 @@
  * Purpose: a Store backed by Google Cloud Firestore. Profiles are
  * top-level documents; every other record sits in a sub-collection of
  * its profile, so each read is scoped to one family and needs no
- * composite index. On Cloud Run the client signs in with the service
- * account automatically.
+ * composite index. The client signs in with the service account it is
+ * given (FIREBASE_CREDENTIALS on a host like Render), and falls back to
+ * Google's default sign-in when none is set (Cloud Run).
  */
 import { Firestore } from '@google-cloud/firestore';
+import { firebaseCredentials } from '@/config/env';
 import type {
    CareProfile,
    CollectionMap,
@@ -27,7 +29,17 @@ export class FirestoreStore implements Store {
    private readonly db: Firestore;
 
    constructor() {
-      this.db = new Firestore({ ignoreUndefinedProperties: true });
+      const credentials = firebaseCredentials();
+      this.db = credentials
+         ? new Firestore({
+              projectId: credentials.projectId,
+              credentials: {
+                 client_email: credentials.clientEmail,
+                 private_key: credentials.privateKey,
+              },
+              ignoreUndefinedProperties: true,
+           })
+         : new Firestore({ ignoreUndefinedProperties: true });
    }
 
    /** Purpose: reference to a sub-collection of one profile. */

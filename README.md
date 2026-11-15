@@ -181,13 +181,20 @@ npm run dev
 
 Open http://localhost:3000. Local work uses the in-memory store (`STORE_BACKEND=memory`), so no database is needed. Data resets when the server restarts.
 
+To try Firestore locally, set `STORE_BACKEND=firestore` and paste a Firebase service-account JSON into `FIREBASE_CREDENTIALS`.
+
 To run every check the CI runs, except the production build:
 
 ```bash
 npm run check
 ```
 
-`npm run check` runs lint, the type check and the unit tests.
+`npm run check` runs lint, the type check and the unit tests. To run the production build the way a host does:
+
+```bash
+npm run build
+npm start
+```
 
 ## Environment variables
 
@@ -198,15 +205,75 @@ Copy `.env.example` to `.env.local` and fill in what you need. Only `SESSION_SEC
 | `SESSION_SECRET` | Signing sessions and email links | Required in production. At least 32 random characters. |
 | `APP_BASE_URL` | Links in reminder emails | Public address of the app. Defaults to `http://localhost:3000`. |
 | `STORE_BACKEND` | Storage choice | `memory` (default) or `firestore`. |
-| `GOOGLE_CLOUD_PROJECT` | Firestore | Your Google Cloud project ID. |
+| `GOOGLE_CLOUD_PROJECT` | Firestore on Cloud Run | Your Google Cloud project ID. Not needed when `FIREBASE_CREDENTIALS` is set. |
+| `FIREBASE_CREDENTIALS` | Firestore on any other host | The service-account JSON, or that JSON encoded as base64. On Cloud Run leave it empty. |
 | `GEMINI_API_KEY` | Prescription reading and "ask the record" fallback | Optional. Without it, prescriptions are typed in by hand and answers are rule based only. |
 | `GEMINI_MODEL` | Gemini model name | Defaults to `gemini-2.5-flash`. |
+| `GEMINI_USE_VERTEX` | Gemini through Vertex AI on Google Cloud | Set to `true` only on Cloud Run. It needs billing. |
+| `GEMINI_LOCATION` | Vertex AI location | Defaults to `global`. |
 | `SMTP_HOST` | Sending email | Optional. Without SMTP, emails are recorded in the delivery log and not sent. |
 | `SMTP_PORT` | Sending email | Defaults to 465. |
 | `SMTP_USER` | Sending email | SMTP login. |
 | `SMTP_PASS` | Sending email | SMTP password. Keep it out of source control. |
 | `SMTP_FROM` | Sending email | Sender address. Defaults to `SMTP_USER`. |
 | `CRON_SECRET` | Scheduler calls to `/api/cron/tick` | Required for the scheduler. The endpoint refuses all requests without it. |
+
+## Deploy free, without a card
+
+The Docker image, Firestore on the Firebase Spark plan, a Gemini key from
+Google AI Studio and a free cron job cover the whole app for nothing.
+`render.yaml` holds the host settings. Replace `YOUR_HOST` with the
+address Render gives you.
+
+1. **Firestore.** In the [Firebase console](https://console.firebase.google.com),
+   create a project, then create a Firestore database. Open *Project
+   settings*, *Service accounts*, and generate a new private key. Keep the
+   JSON file. It goes into `FIREBASE_CREDENTIALS` as it is. If the host
+   mangles line breaks, send it as base64 instead:
+
+   ```bash
+   base64 -w0 service-account.json
+   ```
+
+   The server signs in as that service account, so Firestore security rules
+   do not apply to it. Deny all access from clients and the app still works.
+
+2. **Host.** Sign up at [Render](https://render.com) with GitHub, choose
+   *New*, then *Blueprint*, and pick this repository. Render reads
+   `render.yaml`, builds the `Dockerfile` and asks for the values marked
+   `sync: false`: `APP_BASE_URL` (the address Render gives you, with
+   `https://`), `FIREBASE_CREDENTIALS`, `GEMINI_API_KEY` and the optional
+   `SMTP_*` values. `SESSION_SECRET` and `CRON_SECRET` are generated for
+   you. Free services sleep after a while; the first load then takes about
+   half a minute, and the cron job below keeps it awake.
+
+3. **Gemini.** Create a key at [Google AI Studio](https://aistudio.google.com/apikey)
+   and paste it into `GEMINI_API_KEY`. Leave `GEMINI_USE_VERTEX` empty.
+
+4. **Reminder ticks.** At [cron-job.org](https://cron-job.org), create a
+   job that runs every five minutes:
+
+   | Setting | Value |
+   |---|---|
+   | URL | `https://YOUR_HOST/api/cron/tick` |
+   | Method | `POST` |
+   | Schedule | every 5 minutes |
+   | Request header | `x-cron-secret: YOUR_CRON_SECRET` |
+
+   Copy `CRON_SECRET` from the Render dashboard. A successful run answers
+   with `{"checked":0,"emails":0,"removed":0,"failed":0}`; a `403` means the
+   header does not match. `https://YOUR_HOST/api/health` answers
+   `{"ok":true}` and is safe to poke at any time.
+
+5. **Email.** For Gmail, turn on two-step verification, create an app
+   password, and set `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`,
+   `SMTP_USER` to the address and `SMTP_PASS` to the app password. Without
+   SMTP, every email is written to the delivery log and nothing is sent.
+
+If Firestore is more trouble than it is worth, set `STORE_BACKEND=memory`
+and accept that every circle disappears when the service restarts or
+sleeps. Say so wherever the link is shared. The app logs a warning when
+credentials are set but the backend is still `memory`.
 
 ## Deploy to Cloud Run
 
@@ -257,6 +324,6 @@ Replace `YOUR_PROJECT_ID`, `YOUR_SERVICE_URL` and the secret values with your ow
 - **Email only.** Reminders go by email. Many Indian families read WhatsApp or SMS more often than email. Sending by WhatsApp or SMS is the next step to try.
 - **Prescription reading needs a Gemini key.** Without one, medicines are typed in by hand. Every reading needs a person to check it before it is saved. Gemini can misread a photo.
 - **Not a medical device.** CareCircle gives no medical advice and does not diagnose. It never suggests changing a medicine or its timing. The pattern notes are for raising with the doctor.
-- **Local data is temporary.** The memory store is for local work and tests. Use Firestore for real use.
+- **Local data is temporary.** The memory store is for local work and tests. Use Firestore for real use. On a free host, a memory store also loses every circle when the service sleeps.
 - **Not yet covered by tests.** The browser flows (sign-in, forms and print) are not covered by end-to-end tests. The unit tests cover the rules, not the pages.
 - **Accessibility not audited.** No automated or external accessibility audit has been run yet.
