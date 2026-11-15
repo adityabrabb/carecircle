@@ -1,0 +1,44 @@
+# ----- Calls the reminder check every five minutes, so due doses,
+# escalations and appointment reminders go out even when nobody has the
+# app open. It also keeps the free Render service awake.
+#
+# Needs one repository secret, CRON_SECRET, copied from the Render
+# dashboard. To point the job at another host, set an APP_BASE_URL
+# repository variable; the default below is the deployed service.
+
+name: Reminder check
+
+on:
+   schedule:
+      - cron: '*/5 * * * *'
+   workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+   group: reminder-check
+   cancel-in-progress: false
+
+jobs:
+   tick:
+      runs-on: ubuntu-latest
+      timeout-minutes: 5
+      env:
+         CRON_SECRET: ${{ secrets.CRON_SECRET }}
+         BASE_URL: ${{ vars.APP_BASE_URL || 'https://carecircle-lm0t.onrender.com' }}
+      steps:
+         - name: Check the secret is set
+           if: env.CRON_SECRET == ''
+           run: |
+              echo "The CRON_SECRET secret is not set for this repository."
+              echo "Add it under Settings, Secrets and variables, Actions."
+              exit 1
+
+         - name: Call the reminder check
+           run: |
+              status=$(curl -sS -o tick.json -w '%{http_code}' \
+                 --max-time 120 -X POST "$BASE_URL/api/cron/tick" \
+                 -H "x-cron-secret: $CRON_SECRET")
+              echo "HTTP $status"
+              cat tick.json
+              test "$status" = "200"
