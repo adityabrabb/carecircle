@@ -5,7 +5,7 @@
  * app sends. Pure functions: nothing is sent here. All text that came
  * from a person is escaped before it goes into HTML.
  */
-import { counted } from './text';
+import { counted } from '@/domain/text';
 
 export interface EmailContent {
    subject: string;

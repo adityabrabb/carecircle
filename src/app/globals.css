@@ -980,3 +980,8 @@ a.tile .big-number {
    font-size: 2rem;
    overflow-wrap: anywhere;
 }
+
+/* ----- A line of text that follows a form inside the same card. */
+.after-form {
+   margin-top: 12px;
+}

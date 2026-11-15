@@ -10,6 +10,7 @@
 import { summariseAdherence } from '@/domain/adherence';
 import type { AdherenceSummary } from '@/domain/adherence';
 import { describeSchedule } from '@/domain/medicationForm';
+import { latestReading } from '@/domain/readingForm';
 import { detectPatterns } from '@/domain/patterns';
 import { forecastAll } from '@/domain/refill';
 import type {
@@ -21,7 +22,7 @@ import type {
    Medication,
    Task,
 } from '@/domain/types';
-import { counted } from './text';
+import { counted } from '@/domain/text';
 
 // ----- Types ------------------------------------------------------------
 
@@ -204,23 +205,6 @@ function visitText(visit: Appointment, facts: CareFacts): string {
    return [visit.doctor, facts.whenText(visit.at), visit.location]
       .filter(Boolean)
       .join(', ');
-}
-
-/** Purpose: the most recent reading of one kind, or null when none. */
-function latestReading(
-   readings: readonly HealthReading[],
-   kind: HealthReading['kind'],
-): HealthReading | null {
-   let latest: HealthReading | null = null;
-   for (const reading of readings) {
-      if (
-         reading.kind === kind &&
-         (latest === null || reading.at > latest.at)
-      ) {
-         latest = reading;
-      }
-   } // ----- end for each reading
-   return latest;
 }
 
 /** Purpose: the adherence sentence, shared by answers and fact lists. */

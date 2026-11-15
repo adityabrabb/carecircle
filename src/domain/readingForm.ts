@@ -230,3 +230,20 @@ export function chartSeries(
          value2: reading.value2,
       }));
 }
+
+/** Purpose: the most recent reading of one kind, or null when none. */
+export function latestReading(
+   readings: readonly HealthReading[],
+   kind: HealthReading['kind'],
+): HealthReading | null {
+   let latest: HealthReading | null = null;
+   for (const reading of readings) {
+      if (
+         reading.kind === kind &&
+         (latest === null || reading.at > latest.at)
+      ) {
+         latest = reading;
+      }
+   } // ----- end for each reading
+   return latest;
+}

@@ -15,7 +15,7 @@ import type {
    Medication,
    Task,
 } from '@/domain/types';
-import { counted } from './text';
+import { counted } from '@/domain/text';
 
 /** An appointment this close to now is listed as coming up. */
 const UPCOMING_HOURS = 48;
