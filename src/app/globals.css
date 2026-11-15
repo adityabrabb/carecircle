@@ -681,3 +681,21 @@ details summary {
    border-radius: 6px;
    background: #fff;
 }
+
+/* ----- Summary tiles: a label, one large value and a note, stacked. */
+a.tile {
+   display: flex;
+   flex-direction: column;
+   gap: 6px;
+   color: var(--ink);
+   text-decoration: none;
+}
+
+a.tile:hover {
+   background: var(--marigold-soft);
+}
+
+a.tile .big-number {
+   font-size: 2rem;
+   overflow-wrap: anywhere;
+}

@@ -18,5 +18,6 @@ export const NAV_ITEMS: readonly NavItem[] = [
    { href: '/health', label: 'Health' },
    { href: '/records', label: 'Records' },
    { href: '/circle', label: 'Circle' },
+   { href: '/ask', label: 'Ask' },
    { href: '/settings', label: 'Settings' },
 ];
