@@ -58,14 +58,14 @@ export function layoutEmail(
       .map(
          (action) =>
             `<p style="margin:16px 0;"><a href="${escapeHtml(action.url)}" ` +
-            'style="display:inline-block;background:#14532d;color:#ffffff;' +
+            'style="display:inline-block;background:#1f6f6b;color:#ffffff;' +
             'font-size:20px;font-weight:bold;padding:16px 28px;' +
             'border-radius:12px;text-decoration:none;">' +
             `${escapeHtml(action.label)}</a></p>`,
       )
       .join('');
    const html =
-      '<div style="font-family:Arial,sans-serif;color:#1f1711;' +
+      '<div style="font-family:Arial,sans-serif;color:#1e2a2e;' +
       'max-width:560px;margin:0 auto;padding:16px;">' +
       `<h1 style="font-size:24px;margin:0 0 16px;">${escapeHtml(
          heading,

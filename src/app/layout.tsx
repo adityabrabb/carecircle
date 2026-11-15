@@ -5,11 +5,13 @@
  * signed-in member, main navigation, and the text-size preference.
  */
 import type { Metadata, Viewport } from 'next';
+import { Atkinson_Hyperlegible } from 'next/font/google';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { setTextSize, signOut } from '@/app/actions/auth';
 import { Logo } from '@/components/Logo';
+import { MainNav } from '@/components/MainNav';
 import { OfflineSetup } from '@/components/OfflineSetup';
 import { NAV_ITEMS } from '@/constants/navigation';
 import { t } from '@/i18n/strings';
@@ -30,10 +32,18 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
    width: 'device-width',
    initialScale: 1,
-   themeColor: '#14532d',
+   themeColor: '#1f6f6b',
 };
 
 const TEXT_SIZE_COOKIE = 'cc_text';
+
+// ----- Atkinson Hyperlegible was drawn for readers with low vision.
+const bodyFont = Atkinson_Hyperlegible({
+   subsets: ['latin'],
+   weight: ['400', '700'],
+   display: 'swap',
+   variable: '--font-body',
+});
 
 export default async function RootLayout({
    children,
@@ -46,7 +56,12 @@ export default async function RootLayout({
    const language = context?.profile.language ?? 'en';
 
    return (
-      <html lang={language} className={large ? 'text-large' : undefined}>
+      <html
+         lang={language}
+         className={
+            large ? `text-large ${bodyFont.variable}` : bodyFont.variable
+         }
+      >
          <body>
             <a className="skip-link" href="#main">
                Skip to main content
@@ -64,6 +79,9 @@ export default async function RootLayout({
                         value={large ? 'normal' : 'large'}
                      />
                      <button className="btn quiet small-btn" type="submit">
+                        <span className="text-size-mark" aria-hidden="true">
+                           A
+                        </span>
                         {t(language, large ? 'normalText' : 'largerText')}
                      </button>
                   </form>
@@ -86,20 +104,12 @@ export default async function RootLayout({
                   ) : null}
                </div>
             </header>
-            {context ? (
-               <nav className="nav" aria-label="Main">
-                  <ul>
-                     {NAV_ITEMS.map((item) => (
-                        <li key={item.href}>
-                           <Link href={item.href}>{item.label}</Link>
-                        </li>
-                     ))}
-                  </ul>
-               </nav>
-            ) : null}
-            <main id="main" tabIndex={-1}>
-               {children}
-            </main>
+            <div className={context ? 'shell with-nav' : 'shell'}>
+               {context ? <MainNav items={NAV_ITEMS} /> : null}
+               <main id="main" tabIndex={-1}>
+                  {children}
+               </main>
+            </div>
             <OfflineSetup signedIn={context !== null} />
             <footer className="footer">
                CareCircle helps you keep track. It does not give medical

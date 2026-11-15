@@ -14,11 +14,11 @@ export function Logo({ size = 36 }: { size?: number }) {
          aria-hidden="true"
          focusable="false"
       >
-         <circle cx="24" cy="24" r="21" fill="#f59e0b" stroke="#1f1711"
+         <circle cx="24" cy="24" r="21" fill="#1f6f6b" stroke="#17524f"
             strokeWidth="3" />
-         <circle cx="24" cy="24" r="13" fill="#fdf6e9" stroke="#1f1711"
+         <circle cx="24" cy="24" r="13" fill="#ffffff" stroke="#17524f"
             strokeWidth="3" />
-         <circle cx="24" cy="24" r="5" fill="#a3301a" stroke="#1f1711"
+         <circle cx="24" cy="24" r="5" fill="#f0b44c" stroke="#17524f"
             strokeWidth="3" />
       </svg>
    );
@@ -35,13 +35,13 @@ export function Rings() {
          aria-hidden="true"
          focusable="false"
       >
-         <circle cx="160" cy="160" r="150" fill="none" stroke="#f59e0b"
+         <circle cx="160" cy="160" r="150" fill="none" stroke="#9fd3ca"
             strokeWidth="18" />
-         <circle cx="160" cy="160" r="104" fill="none" stroke="#fdf6e9"
+         <circle cx="160" cy="160" r="104" fill="none" stroke="#1f6f6b"
             strokeWidth="14" strokeDasharray="6 16" strokeLinecap="round" />
-         <circle cx="160" cy="160" r="62" fill="#f59e0b" stroke="#1f1711"
+         <circle cx="160" cy="160" r="62" fill="#c3e0da" stroke="#1f6f6b"
             strokeWidth="5" />
-         <circle cx="160" cy="160" r="24" fill="#a3301a" stroke="#1f1711"
+         <circle cx="160" cy="160" r="24" fill="#f0b44c" stroke="#1f6f6b"
             strokeWidth="5" />
       </svg>
    );
