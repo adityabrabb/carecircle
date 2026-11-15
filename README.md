@@ -2,7 +2,26 @@
 
 CareCircle is a care app where an older person owns their medicines, appointments and health record. Family and caretakers can see what the elder allows, propose changes and get reminders, without taking over the decisions.
 
-Live app: (see the deployment link in the submission)
+Live app: https://carecircle-lm0t.onrender.com
+
+## Chosen vertical
+
+Elderly Care & Medication Management Platform. The persona is an older person living at home, with a paid caretaker and family who may live in another city.
+
+## Approach and logic
+
+- The elder owns the record: family and caretakers propose medicine changes, the elder approves them and decides who sees what.
+- Every dose gets one of four answers (taken, skipped by choice, not sure, or no answer). An unanswered dose climbs an escalation ladder: elder first, then the caretaker, then the family.
+- Decisions use the user's context: their role in the circle, the elder's daily routine and time zone, the stock left for each medicine (refill forecast), and recent readings (patterns worth raising with the doctor).
+- Gemini reads a prescription photo, but nothing is saved until a person confirms each line. Without a Gemini key the app falls back to manual entry and rule-based summaries.
+
+## Assumptions
+
+- One circle per elder; each member signs in with the circle code and their own passcode.
+- Times follow the elder's own time zone.
+- Email is the reminder channel; without SMTP settings, emails are recorded in the delivery log instead of sent.
+- On the free host, storage is in memory and resets when the host sleeps; Firestore is supported for durable storage.
+- CareCircle helps keep track; it does not give medical advice.
 
 ## Try it
 
