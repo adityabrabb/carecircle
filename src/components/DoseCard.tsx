@@ -7,6 +7,7 @@
  * choice to skip; a helper says whether they saw the dose taken.
  */
 import type { ReactNode } from 'react';
+import { PillBadge } from '@/components/PillBadge';
 import { UNSURE_ADVICE } from '@/domain/doses';
 import { formatClock } from '@/domain/time';
 import type {
@@ -57,25 +58,6 @@ export interface DoseCardProps {
    acknowledgeAction?: (form: FormData) => Promise<void>;
    /** Extra hidden inputs, such as the email link token. */
    hidden?: ReactNode;
-}
-
-/** Purpose: the medicine's photo, or a disc in its colour. */
-function PillBadge({ medication }: { medication: Medication | undefined }) {
-   if (medication?.photo) {
-      return (
-         <span className="pill-badge">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={medication.photo} alt="" />
-         </span>
-      );
-   }
-   return (
-      <span
-         className="pill-badge"
-         style={{ background: medication?.colour ?? '#ffffff' }}
-         aria-hidden="true"
-      />
-   );
 }
 
 export function DoseCard(props: DoseCardProps) {

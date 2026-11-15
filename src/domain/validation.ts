@@ -195,3 +195,20 @@ export function parseColour(raw: unknown): string {
    const text = cleanText(raw);
    return COLOUR_PATTERN.test(text) ? text.toLowerCase() : '#c2410c';
 }
+
+/**
+ * Purpose: a local date and time from a "YYYY-MM-DDTHH:MM" form value,
+ * returned as its day and minutes after midnight.
+ */
+export function parseLocalDateTime(
+   raw: unknown,
+   label: string,
+): Result<{ dateKey: string; minutes: number }> {
+   const text = cleanText(raw);
+   const dateKey = text.slice(0, 10);
+   const minutes = clockToMinutes(text.slice(11, 16));
+   if (text[10] !== 'T' || !isDateKey(dateKey) || minutes < 0) {
+      return { ok: false, error: `${label} must be a date and time.` };
+   }
+   return { ok: true, value: { dateKey, minutes } };
+}
