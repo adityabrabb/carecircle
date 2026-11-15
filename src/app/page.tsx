@@ -7,7 +7,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { enterDemo } from '@/app/actions/demo';
-import { Rings } from '@/components/Logo';
+import { DosePacket } from '@/components/Logo';
 import { Notice, type NoticeParams } from '@/components/Notice';
 import { getContext } from '@/services/session';
 
@@ -50,7 +50,8 @@ export default async function LandingPage({
       <>
          <Notice params={await searchParams} />
          <section className="hero" aria-labelledby="hero-title">
-            <Rings />
+            <div className="hero-copy">
+            <p className="packet-label">Rx · Morning · Noon · Night</p>
             <h1 id="hero-title">Care that keeps the elder in charge.</h1>
             <p>
                CareCircle helps an older person manage medicines,
@@ -70,6 +71,8 @@ export default async function LandingPage({
                   </button>
                </form>
             </div>
+            </div>
+            <DosePacket />
          </section>
          <section className="grid" aria-label="What CareCircle does">
             {PILLARS.map((pillar) => (

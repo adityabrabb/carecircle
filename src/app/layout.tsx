@@ -5,7 +5,7 @@
  * signed-in member, main navigation, and the text-size preference.
  */
 import type { Metadata, Viewport } from 'next';
-import { Atkinson_Hyperlegible } from 'next/font/google';
+import { Atkinson_Hyperlegible, Young_Serif } from 'next/font/google';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
    width: 'device-width',
    initialScale: 1,
-   themeColor: '#1f6f6b',
+   themeColor: '#1f3a8a',
 };
 
 const TEXT_SIZE_COOKIE = 'cc_text';
@@ -44,6 +44,16 @@ const bodyFont = Atkinson_Hyperlegible({
    display: 'swap',
    variable: '--font-body',
 });
+
+// ----- Headings in a printed-label serif, like a chemist's packet.
+const headFont = Young_Serif({
+   subsets: ['latin'],
+   weight: '400',
+   display: 'swap',
+   variable: '--font-head',
+});
+
+const FONT_CLASSES = `${bodyFont.variable} ${headFont.variable}`;
 
 export default async function RootLayout({
    children,
@@ -59,7 +69,7 @@ export default async function RootLayout({
       <html
          lang={language}
          className={
-            large ? `text-large ${bodyFont.variable}` : bodyFont.variable
+            large ? `text-large ${FONT_CLASSES}` : FONT_CLASSES
          }
       >
          <body>
