@@ -1,0 +1,60 @@
+<!doctype html>
+<!--
+   Offline page.
+
+   Purpose: shown when a saved CareCircle page is requested with no
+   internet. Plain text and inline CSS only, so it always renders.
+-->
+<html lang="en">
+   <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Offline | CareCircle</title>
+      <style>
+         :root {
+            --bg: #fdf6e9;
+            --text: #1f1711;
+            --band: #14532d;
+            --band-text: #ffffff;
+         }
+         html {
+            background: var(--bg);
+         }
+         body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+            font-size: 20px;
+            line-height: 1.5;
+         }
+         main {
+            max-width: 40rem;
+            margin: 0 auto;
+            padding: 0 16px 32px;
+         }
+         h1 {
+            margin: 0 -16px 24px;
+            padding: 20px 16px;
+            background: var(--band);
+            color: var(--band-text);
+            font-size: 1.6rem;
+            line-height: 1.25;
+         }
+         p {
+            margin: 0 0 16px;
+         }
+      </style>
+   </head>
+   <body>
+      <main>
+         <h1>You are offline</h1>
+         <p>Your printed weekly chart still applies.</p>
+         <p>
+            <strong>If you are not sure whether you took a dose, do not take
+            another one. Tell your caretaker or family.</strong>
+         </p>
+         <p>Reminders and your answers will work again when the connection returns.</p>
+      </main>
+   </body>
+</html>

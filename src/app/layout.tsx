@@ -10,6 +10,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { setTextSize, signOut } from '@/app/actions/auth';
 import { Logo } from '@/components/Logo';
+import { OfflineSetup } from '@/components/OfflineSetup';
 import { NAV_ITEMS } from '@/constants/navigation';
 import { t } from '@/i18n/strings';
 import { getContext } from '@/services/session';
@@ -99,6 +100,7 @@ export default async function RootLayout({
             <main id="main" tabIndex={-1}>
                {children}
             </main>
+            <OfflineSetup signedIn={context !== null} />
             <footer className="footer">
                CareCircle helps you keep track. It does not give medical
                advice. Always follow your doctor.
