@@ -17,9 +17,18 @@ services:
      autoDeploy: true
      envVars:
         # ----- Storage in the process. Nothing to set up, and every
-        # circle resets when the free service restarts.
+        # circle resets when the free service restarts. Switch this to
+        # "firestore" after adding FIREBASE_CREDENTIALS to keep data.
         - key: STORE_BACKEND
           value: memory
+        # ----- Firestore on the Firebase free plan. The service account
+        # JSON, pasted from the Firebase console, works outside Google
+        # Cloud. GOOGLE_CLOUD_PROJECT is only read when the JSON omits
+        # its project.
+        - key: FIREBASE_CREDENTIALS
+          sync: false
+        - key: GOOGLE_CLOUD_PROJECT
+          sync: false
         # ----- Signs sessions and email links. Render makes a random
         # value, so every restart keeps the same secret.
         - key: SESSION_SECRET

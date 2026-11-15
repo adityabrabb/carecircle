@@ -282,6 +282,29 @@ to set up, but data resets whenever the free host restarts or sleeps, so
 treat a deployed circle as a demonstration. Say so wherever the link is
 shared.
 
+To keep the data, move it to Firestore on the Firebase free plan, which
+needs no card:
+
+1. In the [Firebase console](https://console.firebase.google.com), create a
+   project and then a Firestore database.
+2. Open *Project settings*, *Service accounts*, and generate a new private
+   key. Keep the JSON file it downloads.
+3. In Render, open the service, then *Environment*, and set
+   `FIREBASE_CREDENTIALS` to the whole JSON. If the field mangles line
+   breaks, send the same JSON as base64 instead:
+
+   ```bash
+   base64 -w0 service-account.json
+   ```
+
+4. Set `GOOGLE_CLOUD_PROJECT` to the project ID, and `STORE_BACKEND` to
+   `firestore`. Save, and the service redeploys onto Firestore.
+
+The server signs in as that service account, so Firestore security rules do
+not apply to it. Deny all access from clients and the app still works. The
+app warns on startup when credentials are set but `STORE_BACKEND` is still
+`memory`.
+
 ## Deploy to Cloud Run
 
 Replace `YOUR_PROJECT_ID`, `YOUR_SERVICE_URL` and the secret values with your own. The commands use the region `asia-south1` (Mumbai).
