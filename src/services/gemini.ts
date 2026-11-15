@@ -6,9 +6,9 @@
  * domain code and a person confirms it before anything is saved. Side
  * effect: sends the file to the Gemini API. The file is never logged.
  */
-import { GoogleGenAI } from '@google/genai';
-import { geminiApiKey, geminiModel } from '@/config/env';
+import { geminiModel } from '@/config/env';
 import type { Result } from '@/domain/types';
+import { geminiClient, geminiConfigured } from '@/services/geminiClient';
 
 const READ_TIMEOUT_MS = 60_000;
 const DATA_ENCODING = 'base64';
@@ -32,9 +32,9 @@ const PROMPT = [
    '- If something is unclear, leave that field empty instead of guessing.',
 ].join('\n');
 
-/** Purpose: true when a Gemini API key is configured. */
+/** Purpose: true when Gemini is configured (Vertex AI or an API key). */
 export function geminiAvailable(): boolean {
-   return geminiApiKey() !== '';
+   return geminiConfigured();
 }
 
 /** Purpose: a short description of a failure, without any file content. */
@@ -56,14 +56,11 @@ export async function extractPrescription(
    bytes: Buffer,
    mime: string,
 ): Promise<Result<unknown>> {
-   if (!geminiAvailable()) {
+   const ai = geminiClient(READ_TIMEOUT_MS);
+   if (!ai) {
       return { ok: false, error: NOT_SET_UP };
    }
    try {
-      const ai = new GoogleGenAI({
-         apiKey: geminiApiKey(),
-         httpOptions: { timeout: READ_TIMEOUT_MS },
-      });
       const response = await ai.models.generateContent({
          model: geminiModel(),
          contents: [

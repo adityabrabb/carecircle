@@ -6,11 +6,12 @@
  * with no key, or on any failure, there is simply no AI answer and the
  * page falls back to the rule-based message.
  */
-import { GoogleGenAI } from '@google/genai';
-import { geminiApiKey, geminiModel } from '@/config/env';
+import { geminiModel } from '@/config/env';
+import { geminiClient } from '@/services/geminiClient';
 
 const MAX_QUESTION_CHARS = 300;
 const MAX_REPLY_CHARS = 600;
+const ANSWER_TIMEOUT_MS = 30_000;
 
 const SYSTEM_RULES = [
    'You answer questions about one elder care circle, using only the',
@@ -32,13 +33,12 @@ export async function answerFromFacts(
    question: string,
    facts: readonly string[],
 ): Promise<string | null> {
-   const key = geminiApiKey();
-   if (!key) {
+   const ai = geminiClient(ANSWER_TIMEOUT_MS);
+   if (!ai) {
       return null;
    }
    try {
       const clipped = question.slice(0, MAX_QUESTION_CHARS);
-      const ai = new GoogleGenAI({ apiKey: key });
       const response = await ai.models.generateContent({
          model: geminiModel(),
          contents:

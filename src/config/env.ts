@@ -84,6 +84,23 @@ export function geminiApiKey(): string {
    return read('GEMINI_API_KEY');
 }
 
+export interface VertexSettings {
+   project: string;
+   location: string;
+}
+
+/**
+ * Purpose: Vertex AI settings, or null when Vertex is not switched on.
+ * With Vertex the app uses its service account instead of an API key.
+ */
+export function vertexSettings(): VertexSettings | null {
+   const project = read('GOOGLE_CLOUD_PROJECT');
+   if (read('GEMINI_USE_VERTEX') !== 'true' || !project) {
+      return null;
+   }
+   return { project, location: read('GEMINI_LOCATION') || 'global' };
+}
+
 /** Purpose: Gemini model name. */
 export function geminiModel(): string {
    return read('GEMINI_MODEL') || 'gemini-2.5-flash';
