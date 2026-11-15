@@ -98,7 +98,12 @@ export default async function RootLayout({
                   {context ? (
                      <div className="topbar-who row">
                         <span>
-                           {context.member.name} ({context.member.role})
+                           {context.member.name}
+                           {context.member.name.includes(
+                              `(${context.member.role})`,
+                           )
+                              ? ''
+                              : ` (${context.member.role})`}
                            <br />
                            Caring for {context.profile.elderName}
                         </span>

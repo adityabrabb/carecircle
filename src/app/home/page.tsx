@@ -156,8 +156,8 @@ export default async function HomePage({
          {pendingProposals > 0 ? (
             <p className="notice ok">
                {pendingProposals} proposed change
-               {pendingProposals === 1 ? '' : 's'} to your medicines need
-               your decision. <Link href="/medicines">Review now</Link>
+               {pendingProposals === 1 ? '' : 's'} to your medicines{' '}
+               {pendingProposals === 1 ? 'needs' : 'need'} your decision. <Link href="/medicines">Review now</Link>
             </p>
          ) : null}
 

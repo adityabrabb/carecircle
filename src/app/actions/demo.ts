@@ -64,7 +64,9 @@ export async function skipDemoTime(form: FormData): Promise<void> {
    const report = await runTick(moved);
    redirect(
       `/home?ok=${encodeURIComponent(
-         `Clock moved forward. ${report.emails} email(s) recorded.`,
+         `Clock moved forward. ${report.emails} ${
+            report.emails === 1 ? 'email' : 'emails'
+         } recorded.`,
       )}`,
    );
 }
