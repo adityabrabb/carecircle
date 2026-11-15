@@ -17,6 +17,7 @@ import { NAV_ITEMS } from '@/constants/navigation';
 import { t } from '@/i18n/strings';
 import { getContext } from '@/services/session';
 import './globals.css';
+import { memberLabel } from '@/domain/text';
 
 export const metadata: Metadata = {
    title: {
@@ -98,12 +99,7 @@ export default async function RootLayout({
                   {context ? (
                      <div className="topbar-who row">
                         <span>
-                           {context.member.name}
-                           {context.member.name.includes(
-                              `(${context.member.role})`,
-                           )
-                              ? ''
-                              : ` (${context.member.role})`}
+                           {memberLabel(context.member)}
                            <br />
                            Caring for {context.profile.elderName}
                         </span>

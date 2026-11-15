@@ -23,6 +23,7 @@ import { forecastRefill } from '@/domain/refill';
 import { formatLocal, localDateKey, shiftDateKey } from '@/domain/time';
 import { requireContext } from '@/services/session';
 import { getStore } from '@/store';
+import { counted } from '@/domain/text';
 
 export const metadata: Metadata = { title: 'Medicines' };
 
@@ -210,8 +211,8 @@ export default async function MedicinesPage({
                                  forecast.needsRefill ? 'unconfirmed' : 'taken'
                               }`}
                            >
-                              {medication.stock} left, about {forecast.daysLeft}{' '}
-                              day{forecast.daysLeft === 1 ? '' : 's'}
+                              {medication.stock} left, about{' '}
+                              {counted(forecast.daysLeft, 'day', 'days')}
                            </span>
                            {forecast.needsRefill ? (
                               <span className="chip unsure">Refill soon</span>

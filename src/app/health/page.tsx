@@ -9,6 +9,8 @@
  */
 import type { Metadata } from 'next';
 import { addReadingAction, deleteReadingAction } from '@/app/actions/health';
+import { ReadingForms } from '@/components/health/ReadingForms';
+import { nameOf, ReadingTable } from '@/components/health/ReadingTable';
 import { LineChart } from '@/components/LineChart';
 import { Notice, type NoticeParams } from '@/components/Notice';
 import {
@@ -16,8 +18,6 @@ import {
    BP_SYSTOLIC_HIGH,
    GLUCOSE_HIGH,
    GLUCOSE_LOW,
-   MAX_NAME_LENGTH,
-   MAX_TEXT_LENGTH,
    MOOD_MAX,
    MOOD_MIN,
    MS_PER_DAY,
@@ -29,7 +29,6 @@ import { detectPatterns } from '@/domain/patterns';
 import {
    type ChartPoint,
    chartSeries,
-   READING_LIMITS,
 } from '@/domain/readingForm';
 import { formatLocal, localDateKey, shiftDateKey } from '@/domain/time';
 import type {
@@ -46,22 +45,16 @@ export const metadata: Metadata = { title: 'Health' };
 
 const CHART_DAYS = 30;
 const RECENT_NOTES = 10;
+const EMPTY_CHART = `No readings in the last ${CHART_DAYS} days.`;
 const NOTE_KINDS: readonly ReadingKind[] = ['symptom', 'checkIn'];
 const MOOD_VALUES = Array.from(
    { length: MOOD_MAX - MOOD_MIN + 1 },
    (_, index) => MOOD_MIN + index,
 );
-const FORGOTTEN_MEMBER = 'Former member';
-const NO_NOTE = 'None';
 
 /** Purpose: the label for a mood number, or empty when out of range. */
 function moodLabel(mood: number): string {
    return MOOD_LABELS[mood] ?? '';
-}
-
-/** Purpose: the name of a member, or a neutral label if they were removed. */
-function nameOf(members: readonly Member[], id: string): string {
-   return members.find((member) => member.id === id)?.name ?? FORGOTTEN_MEMBER;
 }
 
 /** Purpose: true when the signed-in member may delete this reading. */
@@ -103,59 +96,6 @@ function describeNote(reading: HealthReading): string {
       return `Mood: ${moodLabel(reading.value)}.${extra}`;
    }
    return reading.note;
-}
-
-interface ReadingTableProps {
-   caption: string;
-   rows: readonly HealthReading[];
-   members: readonly Member[];
-   utcOffsetMinutes: number;
-   format: (reading: HealthReading) => string;
-}
-
-/**
- * Purpose: the numbers behind a chart, in a table that screen readers
- * can move through. Collapsed by default to keep the page short.
- */
-function ReadingTable({
-   caption,
-   rows,
-   members,
-   utcOffsetMinutes,
-   format,
-}: ReadingTableProps) {
-   return (
-      <details>
-         <summary>Show the numbers</summary>
-         {rows.length === 0 ? (
-            <p>No readings in the last {CHART_DAYS} days.</p>
-         ) : (
-            <div className="table-wrap">
-               <table>
-                  <caption className="visually-hidden">{caption}</caption>
-                  <thead>
-                     <tr>
-                        <th scope="col">Date and time</th>
-                        <th scope="col">Reading</th>
-                        <th scope="col">Note</th>
-                        <th scope="col">Recorded by</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     {rows.map((reading) => (
-                        <tr key={reading.id}>
-                           <td>{formatLocal(reading.at, utcOffsetMinutes)}</td>
-                           <td>{format(reading)}</td>
-                           <td>{reading.note || NO_NOTE}</td>
-                           <td>{nameOf(members, reading.byId)}</td>
-                        </tr>
-                     ))}
-                  </tbody>
-               </table>
-            </div>
-         )}
-      </details>
-   );
 }
 
 export default async function HealthPage({
@@ -293,6 +233,7 @@ export default async function HealthPage({
                      rows={bpRows}
                      members={members}
                      utcOffsetMinutes={offset}
+                     emptyText={EMPTY_CHART}
                      format={(reading) =>
                         `${reading.value}/${reading.value2} mmHg`
                      }
@@ -326,6 +267,7 @@ export default async function HealthPage({
                      rows={glucoseRows}
                      members={members}
                      utcOffsetMinutes={offset}
+                     emptyText={EMPTY_CHART}
                      format={(reading) => `${reading.value} mg/dL`}
                   />
                </article>
@@ -347,6 +289,7 @@ export default async function HealthPage({
                      rows={weightRows}
                      members={members}
                      utcOffsetMinutes={offset}
+                     emptyText={EMPTY_CHART}
                      format={(reading) => `${reading.value} kg`}
                   />
                </article>
@@ -355,146 +298,7 @@ export default async function HealthPage({
 
          <section aria-labelledby="record-title">
             <h2 id="record-title">Record a reading</h2>
-            <div className="field-grid">
-               <form
-                  className="stack card"
-                  action={addReadingAction}
-                  aria-labelledby="record-bp-title"
-               >
-                  <h3 id="record-bp-title">Blood pressure</h3>
-                  <input type="hidden" name="kind" value="bloodPressure" />
-                  <div>
-                     <label htmlFor="bp-systolic">Top number (systolic)</label>
-                     <input
-                        id="bp-systolic"
-                        name="systolic"
-                        type="number"
-                        inputMode="numeric"
-                        step={1}
-                        min={READING_LIMITS.systolic.min}
-                        max={READING_LIMITS.systolic.max}
-                        required
-                     />
-                  </div>
-                  <div>
-                     <label htmlFor="bp-diastolic">
-                        Bottom number (diastolic)
-                     </label>
-                     <input
-                        id="bp-diastolic"
-                        name="diastolic"
-                        type="number"
-                        inputMode="numeric"
-                        step={1}
-                        min={READING_LIMITS.diastolic.min}
-                        max={READING_LIMITS.diastolic.max}
-                        required
-                     />
-                  </div>
-                  <div>
-                     <label htmlFor="bp-note">Note (optional)</label>
-                     <input
-                        id="bp-note"
-                        name="note"
-                        type="text"
-                        maxLength={MAX_TEXT_LENGTH}
-                     />
-                  </div>
-                  <button className="btn" type="submit">
-                     Save blood pressure
-                  </button>
-               </form>
-
-               <form
-                  className="stack card"
-                  action={addReadingAction}
-                  aria-labelledby="record-sugar-title"
-               >
-                  <h3 id="record-sugar-title">Blood sugar</h3>
-                  <input type="hidden" name="kind" value="glucose" />
-                  <div>
-                     <label htmlFor="sugar-value">Blood sugar, mg/dL</label>
-                     <input
-                        id="sugar-value"
-                        name="value"
-                        type="number"
-                        inputMode="numeric"
-                        step={1}
-                        min={READING_LIMITS.glucose.min}
-                        max={READING_LIMITS.glucose.max}
-                        required
-                     />
-                  </div>
-                  <div>
-                     <label htmlFor="sugar-note">Note (optional)</label>
-                     <input
-                        id="sugar-note"
-                        name="note"
-                        type="text"
-                        maxLength={MAX_TEXT_LENGTH}
-                     />
-                  </div>
-                  <button className="btn" type="submit">
-                     Save blood sugar
-                  </button>
-               </form>
-
-               <form
-                  className="stack card"
-                  action={addReadingAction}
-                  aria-labelledby="record-weight-title"
-               >
-                  <h3 id="record-weight-title">Weight</h3>
-                  <input type="hidden" name="kind" value="weight" />
-                  <div>
-                     <label htmlFor="weight-value">Weight, kg</label>
-                     <input
-                        id="weight-value"
-                        name="value"
-                        type="number"
-                        inputMode="decimal"
-                        step={0.1}
-                        min={READING_LIMITS.weight.min}
-                        max={READING_LIMITS.weight.max}
-                        required
-                     />
-                  </div>
-                  <div>
-                     <label htmlFor="weight-note">Note (optional)</label>
-                     <input
-                        id="weight-note"
-                        name="note"
-                        type="text"
-                        maxLength={MAX_TEXT_LENGTH}
-                     />
-                  </div>
-                  <button className="btn" type="submit">
-                     Save weight
-                  </button>
-               </form>
-
-               <form
-                  className="stack card"
-                  action={addReadingAction}
-                  aria-labelledby="record-symptom-title"
-               >
-                  <h3 id="record-symptom-title">Symptom</h3>
-                  <input type="hidden" name="kind" value="symptom" />
-                  <div>
-                     <label htmlFor="symptom-note">What do you notice?</label>
-                     <input
-                        id="symptom-note"
-                        name="note"
-                        type="text"
-                        maxLength={MAX_NAME_LENGTH}
-                        required
-                     />
-                  </div>
-                  <button className="btn" type="submit">
-                     Save symptom
-                  </button>
-               </form>
-            </div>
+            <ReadingForms />
          </section>
 
          <section className="card" aria-labelledby="notes-title">

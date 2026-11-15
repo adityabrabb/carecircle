@@ -24,6 +24,7 @@ import { can, isOwner } from '@/domain/permissions';
 import { formatLocal } from '@/domain/time';
 import { requireContext } from '@/services/session';
 import { getStore } from '@/store';
+import { counted } from '@/domain/text';
 
 export const metadata: Metadata = { title: 'Medical records' };
 
@@ -72,7 +73,7 @@ export default async function RecordsPage({
       members.find((candidate) => candidate.id === id)?.name ??
       'a former member';
    const countText =
-      found.length === 1 ? '1 record' : `${found.length} records`;
+      counted(found.length, 'record', 'records');
 
    return (
       <>

@@ -13,6 +13,7 @@ import { type ScanState, scanPrescriptionAction } from '@/app/actions/scan';
 import { MedicineForm } from '@/components/MedicineForm';
 import { MAX_DOCUMENT_BYTES } from '@/constants/care';
 import type { ComparedDraft } from '@/domain/prescriptionParse';
+import { counted } from '@/domain/text';
 
 export interface ScanPanelProps {
    isHelper: boolean;
@@ -44,7 +45,7 @@ function countText(total: number): string {
       return 'No medicines were found. Try a clearer photo, or type the ' +
          'medicine in.';
    }
-   return `${total} medicine${total === 1 ? '' : 's'} found on the prescription.`;
+   return `${counted(total, 'medicine', 'medicines')} found on the prescription.`;
 }
 
 /** Purpose: the upload button, showing progress while the file is read. */

@@ -21,6 +21,7 @@ import type {
    Medication,
    Task,
 } from '@/domain/types';
+import { counted } from './text';
 
 // ----- Types ------------------------------------------------------------
 
@@ -150,12 +151,12 @@ function asks(text: string, words: readonly string[]): boolean {
 
 /** Purpose: "1 day" or "3 days". */
 function dayCount(days: number): string {
-   return `${days} ${days === 1 ? 'day' : 'days'}`;
+   return counted(days, 'day', 'days');
 }
 
 /** Purpose: "1 tablet" or "5 tablets". */
 function tabletCount(count: number): string {
-   return `${count} ${count === 1 ? 'tablet' : 'tablets'}`;
+   return counted(count, 'tablet', 'tablets');
 }
 
 /** Purpose: a medicine's name and strength, without a stray space. */

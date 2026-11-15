@@ -15,6 +15,7 @@ import type {
    Medication,
    Task,
 } from '@/domain/types';
+import { counted } from './text';
 
 /** An appointment this close to now is listed as coming up. */
 const UPCOMING_HOURS = 48;
@@ -43,11 +44,6 @@ export interface Pulse {
    onTrack: string[];
    needsAttention: string[];
    upcoming: string[];
-}
-
-/** Purpose: a count with the right noun, such as "1 dose" or "3 doses". */
-function counted(count: number, one: string, many: string): string {
-   return `${count} ${count === 1 ? one : many}`;
 }
 
 /**

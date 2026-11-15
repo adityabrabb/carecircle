@@ -5,6 +5,7 @@
  * app sends. Pure functions: nothing is sent here. All text that came
  * from a person is escaped before it goes into HTML.
  */
+import { counted } from './text';
 
 export interface EmailContent {
    subject: string;
@@ -180,7 +181,7 @@ export function refillEmail(
    daysLeft: number,
    openUrl: string,
 ): EmailContent {
-   const days = daysLeft === 1 ? '1 day' : `${daysLeft} days`;
+   const days = counted(daysLeft, 'day', 'days');
    return layoutEmail(
       `${medicine} is running low for ${elderName}`,
       `${recipientName}, ${medicine} will run out soon`,

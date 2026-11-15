@@ -14,6 +14,7 @@ import { createDemoCircle } from '@/services/demoSeed';
 import { runTick } from '@/services/reminders';
 import { requireContext, startSession } from '@/services/session';
 import { getStore } from '@/store';
+import { counted } from '@/domain/text';
 
 /** Clock jumps a visitor may choose, in minutes. */
 const ALLOWED_SKIPS: readonly number[] = [30, 60, 180, MINUTES_PER_DAY];
@@ -64,9 +65,7 @@ export async function skipDemoTime(form: FormData): Promise<void> {
    const report = await runTick(moved);
    redirect(
       `/home?ok=${encodeURIComponent(
-         `Clock moved forward. ${report.emails} ${
-            report.emails === 1 ? 'email' : 'emails'
-         } recorded.`,
+         `Clock moved forward. ${counted(report.emails, 'email', 'emails')} recorded.`,
       )}`,
    );
 }

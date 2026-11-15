@@ -27,6 +27,7 @@ import { foodNote, loadCurrentDoses } from '@/services/care';
 import { tickIfStale } from '@/services/reminders';
 import { requireContext } from '@/services/session';
 import { getStore } from '@/store';
+import { agree, counted } from '@/domain/text';
 
 export const metadata: Metadata = { title: 'Today' };
 
@@ -155,9 +156,9 @@ export default async function HomePage({
 
          {pendingProposals > 0 ? (
             <p className="notice ok">
-               {pendingProposals} proposed change
-               {pendingProposals === 1 ? '' : 's'} to your medicines{' '}
-               {pendingProposals === 1 ? 'needs' : 'need'} your decision. <Link href="/medicines">Review now</Link>
+               {counted(pendingProposals, 'proposed change', 'proposed changes')}{' '}
+               to your medicines {agree(pendingProposals, 'needs', 'need')}{' '}
+               your decision. <Link href="/medicines">Review now</Link>
             </p>
          ) : null}
 
