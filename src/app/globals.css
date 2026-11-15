@@ -1,0 +1,669 @@
+/* ----- CareCircle styles.
+   Purpose: one stylesheet for the whole app. Large type, strong
+   contrast, thick outlines and big touch targets, so the pages stay
+   readable for older eyes and usable with a keyboard or screen reader.
+   Colour is never the only signal: every status also has a label. */
+
+:root {
+   --paper: #fdf6e9;
+   --card: #fffdf8;
+   --ink: #1f1711;
+   --ink-soft: #4a3f36;
+   --line: #1f1711;
+   --green: #14532d;
+   --green-soft: #dcf3e2;
+   --marigold: #f59e0b;
+   --marigold-soft: #fdeac2;
+   --terracotta: #a3301a;
+   --terracotta-soft: #fbe1d9;
+   --indigo: #312e81;
+   --indigo-soft: #e3e2f7;
+   --slate: #475569;
+   --slate-soft: #e5e9ef;
+   --radius: 14px;
+   --shadow: 4px 4px 0 var(--line);
+   --base: 18px;
+   --tap: 56px;
+}
+
+html.text-large {
+   --base: 22px;
+}
+
+* {
+   box-sizing: border-box;
+}
+
+html {
+   font-size: var(--base);
+   -webkit-text-size-adjust: 100%;
+}
+
+body {
+   margin: 0;
+   background: var(--paper);
+   color: var(--ink);
+   font-family: system-ui, -apple-system, 'Segoe UI', Roboto,
+      'Noto Sans', 'Noto Sans Devanagari', sans-serif;
+   line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+   font-family: Georgia, 'Times New Roman', 'Noto Serif', serif;
+   line-height: 1.15;
+   margin: 0 0 0.5rem;
+   letter-spacing: -0.01em;
+}
+
+h1 {
+   font-size: 2.1rem;
+}
+
+h2 {
+   font-size: 1.45rem;
+}
+
+h3 {
+   font-size: 1.15rem;
+}
+
+p {
+   margin: 0 0 0.75rem;
+}
+
+a {
+   color: var(--green);
+   text-underline-offset: 3px;
+}
+
+:focus-visible {
+   outline: 4px solid var(--indigo);
+   outline-offset: 3px;
+   border-radius: 6px;
+}
+
+/* ----- Skip link: first stop for keyboard users. */
+.skip-link {
+   position: absolute;
+   left: 12px;
+   top: -80px;
+   background: var(--ink);
+   color: #fff;
+   padding: 12px 18px;
+   border-radius: 8px;
+   z-index: 50;
+}
+
+.skip-link:focus {
+   top: 12px;
+}
+
+.visually-hidden {
+   position: absolute;
+   width: 1px;
+   height: 1px;
+   overflow: hidden;
+   clip: rect(0 0 0 0);
+   white-space: nowrap;
+}
+
+/* ----- Top bar and navigation. */
+.topbar {
+   background: var(--green);
+   color: #fff;
+   border-bottom: 4px solid var(--line);
+}
+
+.topbar-inner {
+   max-width: 1080px;
+   margin: 0 auto;
+   padding: 12px 16px;
+   display: flex;
+   flex-wrap: wrap;
+   align-items: center;
+   gap: 10px 18px;
+}
+
+.brand {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   color: #fff;
+   font-family: Georgia, 'Times New Roman', serif;
+   font-weight: 700;
+   font-size: 1.35rem;
+   text-decoration: none;
+}
+
+.brand svg {
+   flex: none;
+}
+
+.topbar-who {
+   margin-left: auto;
+   font-size: 0.85rem;
+   text-align: right;
+}
+
+.nav {
+   background: var(--marigold);
+   border-bottom: 4px solid var(--line);
+}
+
+.nav ul {
+   max-width: 1080px;
+   margin: 0 auto;
+   padding: 0 8px;
+   list-style: none;
+   display: flex;
+   gap: 4px;
+   overflow-x: auto;
+}
+
+.nav a {
+   display: block;
+   padding: 14px 14px;
+   min-height: var(--tap);
+   color: var(--ink);
+   font-weight: 700;
+   text-decoration: none;
+   white-space: nowrap;
+   border-bottom: 5px solid transparent;
+}
+
+.nav a:hover,
+.nav a[aria-current='page'] {
+   border-bottom-color: var(--ink);
+   background: #ffc04a;
+}
+
+main {
+   max-width: 1080px;
+   margin: 0 auto;
+   padding: 22px 16px 64px;
+}
+
+.page-head {
+   margin-bottom: 18px;
+}
+
+.page-head p {
+   color: var(--ink-soft);
+   max-width: 60ch;
+}
+
+/* ----- Cards and layout. */
+.card {
+   background: var(--card);
+   border: 3px solid var(--line);
+   border-radius: var(--radius);
+   box-shadow: var(--shadow);
+   padding: 18px;
+   margin-bottom: 20px;
+}
+
+.card.tint-green {
+   background: var(--green-soft);
+}
+
+.card.tint-marigold {
+   background: var(--marigold-soft);
+}
+
+.card.tint-terracotta {
+   background: var(--terracotta-soft);
+}
+
+.card.tint-indigo {
+   background: var(--indigo-soft);
+}
+
+.grid {
+   display: grid;
+   gap: 20px;
+   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.grid > .card {
+   margin-bottom: 0;
+}
+
+.stack > * + * {
+   margin-top: 12px;
+}
+
+.row {
+   display: flex;
+   flex-wrap: wrap;
+   align-items: center;
+   gap: 10px;
+}
+
+.spread {
+   justify-content: space-between;
+}
+
+.muted {
+   color: var(--ink-soft);
+}
+
+.small {
+   font-size: 0.85rem;
+}
+
+.big-number {
+   font-family: Georgia, 'Times New Roman', serif;
+   font-size: 2.6rem;
+   font-weight: 700;
+   line-height: 1;
+}
+
+/* ----- Buttons. */
+.btn {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: 8px;
+   min-height: var(--tap);
+   padding: 10px 20px;
+   border: 3px solid var(--line);
+   border-radius: 12px;
+   background: var(--green);
+   color: #fff;
+   font: inherit;
+   font-weight: 700;
+   text-decoration: none;
+   cursor: pointer;
+   box-shadow: 3px 3px 0 var(--line);
+}
+
+.btn:hover {
+   transform: translate(-1px, -1px);
+   box-shadow: 4px 4px 0 var(--line);
+}
+
+.btn:active {
+   transform: translate(2px, 2px);
+   box-shadow: 1px 1px 0 var(--line);
+}
+
+.btn.quiet {
+   background: var(--card);
+   color: var(--ink);
+}
+
+.btn.warn {
+   background: var(--marigold);
+   color: var(--ink);
+}
+
+.btn.danger {
+   background: var(--terracotta);
+   color: #fff;
+}
+
+.btn.huge {
+   min-height: 76px;
+   font-size: 1.3rem;
+   width: 100%;
+}
+
+.btn.small-btn {
+   min-height: 44px;
+   padding: 6px 14px;
+   font-size: 0.9rem;
+}
+
+/* ----- Forms. */
+form.stack label,
+.field label {
+   display: block;
+   font-weight: 700;
+   margin-bottom: 4px;
+}
+
+.hint {
+   display: block;
+   font-weight: 400;
+   color: var(--ink-soft);
+   font-size: 0.85rem;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='date'],
+input[type='time'],
+input[type='datetime-local'],
+input[type='file'],
+select,
+textarea {
+   width: 100%;
+   min-height: var(--tap);
+   padding: 10px 12px;
+   border: 3px solid var(--line);
+   border-radius: 10px;
+   background: #fff;
+   color: var(--ink);
+   font: inherit;
+}
+
+textarea {
+   min-height: 110px;
+   resize: vertical;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+   width: 26px;
+   height: 26px;
+   accent-color: var(--green);
+   flex: none;
+}
+
+.check {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   min-height: 44px;
+   font-weight: 400;
+}
+
+fieldset {
+   border: 3px solid var(--line);
+   border-radius: 10px;
+   padding: 12px 14px;
+   margin: 0;
+}
+
+legend {
+   font-weight: 700;
+   padding: 0 6px;
+}
+
+.field-grid {
+   display: grid;
+   gap: 12px;
+   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* ----- Notices. */
+.notice {
+   border: 3px solid var(--line);
+   border-radius: 12px;
+   padding: 14px 16px;
+   margin-bottom: 18px;
+   font-weight: 700;
+}
+
+.notice.error {
+   background: var(--terracotta-soft);
+   border-color: var(--terracotta);
+}
+
+.notice.ok {
+   background: var(--green-soft);
+   border-color: var(--green);
+}
+
+/* ----- Status chips: a shape and a word, never colour alone. */
+.chip {
+   display: inline-flex;
+   align-items: center;
+   gap: 6px;
+   padding: 4px 12px;
+   border: 2px solid var(--line);
+   border-radius: 999px;
+   font-size: 0.85rem;
+   font-weight: 700;
+   background: #fff;
+   white-space: nowrap;
+}
+
+.chip.taken {
+   background: var(--green-soft);
+}
+
+.chip.skipped {
+   background: var(--slate-soft);
+}
+
+.chip.unsure {
+   background: var(--marigold-soft);
+}
+
+.chip.unconfirmed {
+   background: var(--terracotta-soft);
+}
+
+.chip.info {
+   background: var(--indigo-soft);
+}
+
+/* ----- Lists and tables. */
+.list {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+}
+
+.list > li {
+   padding: 12px 0;
+   border-top: 2px dashed #cdbfae;
+}
+
+.list > li:first-child {
+   border-top: 0;
+}
+
+table {
+   width: 100%;
+   border-collapse: collapse;
+}
+
+th,
+td {
+   text-align: left;
+   padding: 10px 8px;
+   border-bottom: 2px solid #e2d6c6;
+   vertical-align: top;
+}
+
+th {
+   font-size: 0.85rem;
+   text-transform: uppercase;
+   letter-spacing: 0.04em;
+}
+
+.table-wrap {
+   overflow-x: auto;
+}
+
+/* ----- Dose cards. */
+.cards {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+}
+
+details summary {
+   cursor: pointer;
+   min-height: 44px;
+   padding: 8px 0;
+   font-weight: 700;
+}
+
+.dose {
+   display: grid;
+   grid-template-columns: 64px 1fr;
+   gap: 14px;
+   align-items: start;
+}
+
+.pill-badge {
+   width: 64px;
+   height: 64px;
+   border: 3px solid var(--line);
+   border-radius: 50%;
+   display: grid;
+   place-items: center;
+   overflow: hidden;
+   background: #fff;
+}
+
+.pill-badge img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+}
+
+.dose-actions {
+   display: grid;
+   gap: 10px;
+   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+   margin-top: 12px;
+}
+
+/* ----- Timeline. */
+.timeline {
+   list-style: none;
+   margin: 0;
+   padding: 0 0 0 18px;
+   border-left: 4px solid var(--line);
+}
+
+.timeline li {
+   position: relative;
+   padding: 0 0 16px 16px;
+}
+
+.timeline li::before {
+   content: '';
+   position: absolute;
+   left: -29px;
+   top: 4px;
+   width: 14px;
+   height: 14px;
+   border: 3px solid var(--line);
+   border-radius: 50%;
+   background: var(--marigold);
+}
+
+/* ----- Landing hero. */
+.hero {
+   background: var(--green);
+   color: #fff;
+   border: 3px solid var(--line);
+   border-radius: var(--radius);
+   box-shadow: var(--shadow);
+   padding: 28px 22px;
+   margin-bottom: 22px;
+   position: relative;
+   overflow: hidden;
+}
+
+.hero h1 {
+   font-size: 2.6rem;
+   max-width: 16ch;
+}
+
+.hero p {
+   max-width: 52ch;
+   font-size: 1.1rem;
+}
+
+.hero .rings {
+   position: absolute;
+   right: -70px;
+   top: -70px;
+   opacity: 0.9;
+}
+
+.hero .btn {
+   background: var(--marigold);
+   color: var(--ink);
+}
+
+.hero .btn.quiet {
+   background: #fff;
+}
+
+.code {
+   font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+   font-size: 1.3rem;
+   font-weight: 700;
+   letter-spacing: 0.12em;
+   background: #fff;
+   border: 3px dashed var(--line);
+   border-radius: 10px;
+   padding: 6px 12px;
+   display: inline-block;
+}
+
+.footer {
+   max-width: 1080px;
+   margin: 0 auto;
+   padding: 0 16px 40px;
+   color: var(--ink-soft);
+   font-size: 0.85rem;
+}
+
+@media (max-width: 560px) {
+   h1 {
+      font-size: 1.7rem;
+   }
+
+   .hero h1 {
+      font-size: 2rem;
+   }
+
+   .topbar-who {
+      margin-left: 0;
+      text-align: left;
+      width: 100%;
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   * {
+      transition: none !important;
+      animation: none !important;
+   }
+
+   .btn:hover,
+   .btn:active {
+      transform: none;
+   }
+}
+
+/* ----- Print: the weekly fridge chart prints clean, without chrome. */
+@media print {
+   .topbar,
+   .nav,
+   .footer,
+   .no-print,
+   .skip-link {
+      display: none !important;
+   }
+
+   body {
+      background: #fff;
+   }
+
+   main {
+      max-width: none;
+      padding: 0;
+   }
+
+   .card {
+      box-shadow: none;
+      break-inside: avoid;
+   }
+
+   html {
+      font-size: 16px;
+   }
+}
