@@ -583,7 +583,14 @@ details summary {
    position: absolute;
    right: -70px;
    top: -70px;
-   opacity: 0.9;
+   opacity: 0.35;
+   z-index: 0;
+   pointer-events: none;
+}
+
+.hero > :not(.rings) {
+   position: relative;
+   z-index: 1;
 }
 
 .hero .btn {
@@ -622,6 +629,12 @@ details summary {
 
    .hero h1 {
       font-size: 2rem;
+   }
+
+   .hero .rings {
+      right: -110px;
+      top: -110px;
+      opacity: 0.25;
    }
 
    .topbar-who {
