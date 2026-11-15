@@ -26,15 +26,17 @@ export function isProduction(): boolean {
 
 /**
  * Purpose: the secret that signs sessions and email links. In
- * production it must be set and long. In local work a random secret is
- * made once per process, so nothing guessable is ever used.
+ * production it must be set and long, whatever the storage backend: a
+ * random per-process secret would sign everyone out on every restart.
+ * In local work a random secret is made once per process, so nothing
+ * guessable is ever used.
  */
 export function sessionSecret(): string {
    const configured = read('SESSION_SECRET');
    if (configured.length >= MIN_SECRET_LENGTH) {
       return configured;
    }
-   if (isProduction() && read('STORE_BACKEND') === 'firestore') {
+   if (isProduction()) {
       throw new Error(
          'SESSION_SECRET must be set to at least 32 characters.',
       );
