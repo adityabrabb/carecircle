@@ -28,6 +28,9 @@ import { getStore } from '@/store';
 
 const HISTORY_DAYS = 7;
 
+/** Sample medicines were last changed this many days ago. */
+const SEED_AGE_DAYS = 30;
+
 /** Today's doses older than this are seeded as already taken. */
 const SETTLED_AFTER_HOURS = 2;
 
@@ -72,7 +75,7 @@ function medicine(
       status: 'active',
       startDate,
       endDate: '',
-      updatedAt: now,
+      updatedAt: now - SEED_AGE_DAYS*MS_PER_DAY,
       ...fields,
    };
 }
